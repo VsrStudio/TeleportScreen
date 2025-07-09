@@ -1,0 +1,9 @@
+screen-delay: 3
+screen-message: "§bTeleporting..."
+screen-freeze: true
+
+screen-settings:
+  join: true
+  respawn: true
+  teleport: true
+screen-sound: "mob.endermen.portal"
