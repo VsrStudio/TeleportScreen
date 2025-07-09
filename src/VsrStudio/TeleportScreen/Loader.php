@@ -21,7 +21,7 @@ class Loader extends PluginBase {
     public function onLoad(): void {
         self::$instance = $this;
 
-        $packFolder = $this->getDataFolder() . "resources/";
+        $packFolder = $this->getDataFolder() . "Screen/";
         @mkdir($packFolder);
         foreach (array_slice(scandir($packFolder), 2) as $pack) {
             if (!str_contains($pack, "mcpack")) {
@@ -53,6 +53,13 @@ class Loader extends PluginBase {
         $this->getLogger()->info(C::GREEN . "Plugin Enabled - VsrStudio");
 
         @mkdir($this->getDataFolder());
+        @mkdir($this->getDataFolder() . "Screen/");
+
+        $resourceFile = "Screen/TeleportScreen.mcpack";
+        if (!file_exists($this->getDataFolder() . $resourceFile)) {
+        $this->saveResource($resourceFile);
+        }
+
         $this->saveResource("config.yml");
 
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
