@@ -15,52 +15,48 @@ class Loader extends PluginBase {
 
     private static self $instance;
 
-    /** @var string[] */
-    private array $loaded = [];
+    public function onLoad(): void {
+        self::$instance = $this;
+    }
 
     public function onEnable(): void {
         $this->getLogger()->info(C::GREEN . "Plugin Enabled - VsrStudio");
-        
-        $this->saveDefaultConfig();
-        $this->saveResource("TeleportScreen.mcpack");
 
+        $this->saveDefaultConfig();
         $this->saveResource("config.yml");
+        $this->saveResource("TeleportScreen.mcpack");
 
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 
         $this->getServer()->getPluginManager()->registerEvents(new MoveEvent(), $this);
+
         $this->loadResourcePack("TeleportScreen.mcpack");
     }
 
     private function loadResourcePack(string $file): void {
-        $rpManager = $this->getServer()->getResourcePackManager();
         $packPath = Path::join($this->getDataFolder(), $file);
 
         if (!file_exists($packPath)) {
-            $this->getLogger()->warning("Resource pack '$file' not found in plugin_data folder.");
+            $this->getLogger()->warning("Resource pack '$file' not found in plugin_data.");
             return;
         }
 
+        $rpManager = $this->getServer()->getResourcePackManager();
         $pack = new ZippedResourcePack($packPath);
+
         $rpManager->setResourceStack(array_merge($rpManager->getResourceStack(), [$pack]));
 
-        $forceResources = new \ReflectionProperty($rpManager, "serverForceResources");
-        $forceResources->setAccessible(true);
-        $forceResources->setValue($rpManager, true);
+        $reflection = new \ReflectionProperty($rpManager, "serverForceResources");
+        $reflection->setAccessible(true);
+        $reflection->setValue($rpManager, true);
 
         $this->getLogger()->info("§aResource pack '$file' successfully loaded and forced.");
     }
 
-    /**
-     * Akses Config Plugin
-     */
     public function getPluginConfig(): Config {
         return $this->config;
     }
 
-    /**
-     * Akses Instance Plugin
-     */
     public static function getInstance(): self {
         return self::$instance;
     }
