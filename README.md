@@ -2,7 +2,10 @@
 
 🎮 **TeleportScreen** is a PocketMine-MP API 5 plugin that displays a custom screen (UI & animation) when a player teleports, respawns, or joins a server. This plugin also supports sound effects and a **freeze** feature to keep the game running smoothly.
 
-![TeleportScreen Demo](https://github.com/VsrStudio/TeleportScreen/blob/main/63354992-59ab-4125-94e5-8a1ff684f4e6.gif)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/VsrStudio/TeleportScreen/main/icon.png" width="64" style="margin-right: 10px;"/>
+  <img src="https://github.com/VsrStudio/TeleportScreen/blob/main/63354992-59ab-4125-94e5-8a1ff684f4e6.gif" width="480"/>
+</p>
 
 ## Feature
 
@@ -14,10 +17,10 @@
 
 ## Configuration
 ```yaml
-screen-delay: 5 # Waktu delay screen dan freeze (detik)
-screen-message: "§bTeleporting..." # Pesan saat screen tampil
-screen-sound: "ambient.frozen" # Nama sound Minecraft
-screen-freeze: true # Aktifkan freeze player
+screen-delay: 5 # Screen delay and freeze time (seconds)
+screen-message: "§bTeleporting..." # Message when screen appears
+screen-sound: "enderdragon.sigma" # Minecraft sound names
+screen-freeze: true # Enable freeze player
 
 screen-settings:
   join: true
