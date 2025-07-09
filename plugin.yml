@@ -1,0 +1,7 @@
+name: TeleportScreen
+main: VsrStudio\TeleportScreen\Loader.php
+api: 5.0.0
+version: 1.0
+author: VsrStudio
+description: Simple TeleportScreen Your Teleport
+website: vststudio.web.id
