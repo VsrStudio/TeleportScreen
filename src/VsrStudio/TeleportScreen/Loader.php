@@ -4,10 +4,10 @@ namespace VsrStudio\TeleportScreen;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\resourcepacks\ZippedResourcePack;
+use Symfony\Component\Filesystem\Path;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as C;
 use VsrStudio\TeleportScreen\event\MoveEvent;
-use pocketmine\utils\Path;
 
 class Loader extends PluginBase {
 
@@ -18,53 +18,37 @@ class Loader extends PluginBase {
     /** @var string[] */
     private array $loaded = [];
 
-    public function onLoad(): void {
-        self::$instance = $this;
-
-        $packFolder = $this->getDataFolder() . "Screen/";
-        @mkdir($packFolder);
-        foreach (array_slice(scandir($packFolder), 2) as $pack) {
-            if (!str_contains($pack, "mcpack")) {
-                continue;
-            }
-
-            $packPath = Path::join($packFolder, $pack);
-            $newPack = new ZippedResourcePack($packPath);
-            $rpManager = $this->getServer()->getResourcePackManager();
-
-            $resourcePacks = new \ReflectionProperty($rpManager, "resourcePacks");
-            $resourcePacks->setAccessible(true);
-            $resourcePacks->setValue($rpManager, array_merge($resourcePacks->getValue($rpManager), [$newPack]));
-
-            $uuidList = new \ReflectionProperty($rpManager, "uuidList");
-            $uuidList->setAccessible(true);
-            $uuidList->setValue($rpManager, $uuidList->getValue($rpManager) + [strtolower($newPack->getPackId()) => $newPack]);
-
-            $serverForceResources = new \ReflectionProperty($rpManager, "serverForceResources");
-            $serverForceResources->setAccessible(true);
-            $serverForceResources->setValue($rpManager, true);
-
-            $this->getLogger()->info("§eResourcePack " . $pack . " successfully loaded!");
-            $this->loaded[] = $pack;
-        }
-    }
-
     public function onEnable(): void {
         $this->getLogger()->info(C::GREEN . "Plugin Enabled - VsrStudio");
-
-        @mkdir($this->getDataFolder());
-        @mkdir($this->getDataFolder() . "Screen/");
-
-        $resourceFile = "Screen/TeleportScreen.mcpack";
-        if (!file_exists($this->getDataFolder() . $resourceFile)) {
-        $this->saveResource($resourceFile);
-        }
+        
+        $this->saveDefaultConfig();
+        $this->saveResource("TeleportScreen.mcpack");
 
         $this->saveResource("config.yml");
 
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 
         $this->getServer()->getPluginManager()->registerEvents(new MoveEvent(), $this);
+        $this->loadResourcePack("TeleportScreen.mcpack");
+    }
+
+    private function loadResourcePack(string $file): void {
+        $rpManager = $this->getServer()->getResourcePackManager();
+        $packPath = Path::join($this->getDataFolder(), $file);
+
+        if (!file_exists($packPath)) {
+            $this->getLogger()->warning("Resource pack '$file' not found in plugin_data folder.");
+            return;
+        }
+
+        $pack = new ZippedResourcePack($packPath);
+        $rpManager->setResourceStack(array_merge($rpManager->getResourceStack(), [$pack]));
+
+        $forceResources = new \ReflectionProperty($rpManager, "serverForceResources");
+        $forceResources->setAccessible(true);
+        $forceResources->setValue($rpManager, true);
+
+        $this->getLogger()->info("§aResource pack '$file' successfully loaded and forced.");
     }
 
     /**
