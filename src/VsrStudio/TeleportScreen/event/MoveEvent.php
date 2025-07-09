@@ -16,23 +16,26 @@ use pocketmine\utils\TextFormat as C;
 
 class MoveEvent implements Listener {
 
-    /** @var array<string, int> freeze end time per player */
+    /** @var array<string, int> */
     private array $screenedPlayers = [];
 
     /**
-     * Show screen and freeze if set
+     * Handling screen displays and freezing
      */
     private function handleScreen(Player $player): void {
         $config = Loader::getInstance()->getPluginConfig();
-        $delay = (int)$config->get("screen-delay", 5);
+
+        $delay = (int) $config->get("screen-delay", 5);
         $message = C::colorize($config->get("screen-message", "§bTeleporting..."));
-        $freeze = (bool)$config->get("screen-freeze", true);
+        $freeze = (bool) $config->get("screen-freeze", true);
 
         $id = spl_object_hash($player);
 
         if (isset($this->screenedPlayers[$id])) return;
 
-        $this->screenedPlayers[$id] = time() + $delay;
+        if ($freeze) {
+            $this->screenedPlayers[$id] = time() + $delay;
+        }
 
         TeleportScreen::screen($player);
         $player->sendTip($message);
@@ -47,14 +50,16 @@ class MoveEvent implements Listener {
 
     public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
-        if (Loader::getInstance()->getPluginConfig()->get("screen-settings")["join"]) {
+        $settings = Loader::getInstance()->getPluginConfig()->get("screen-settings", []);
+        if (!empty($settings["join"])) {
             $this->handleScreen($player);
         }
     }
 
     public function onRespawn(PlayerRespawnEvent $event): void {
         $player = $event->getPlayer();
-        if (Loader::getInstance()->getPluginConfig()->get("screen-settings")["respawn"]) {
+        $settings = Loader::getInstance()->getPluginConfig()->get("screen-settings", []);
+        if (!empty($settings["respawn"])) {
             $this->handleScreen($player);
         }
     }
@@ -68,7 +73,8 @@ class MoveEvent implements Listener {
 
         if ($from->getFolderName() === $to->getFolderName()) return;
 
-        if (Loader::getInstance()->getPluginConfig()->get("screen-settings")["teleport"]) {
+        $settings = Loader::getInstance()->getPluginConfig()->get("screen-settings", []);
+        if (!empty($settings["teleport"])) {
             $this->handleScreen($entity);
         }
     }
@@ -79,13 +85,12 @@ class MoveEvent implements Listener {
     }
 
     /**
-     * Prevent movement of players who are currently frozen
+     * Prevent player movement while freeze
      */
     public function onMove(PlayerMoveEvent $event): void {
         $player = $event->getPlayer();
         $id = spl_object_hash($player);
-        $config = Loader::getInstance()->getPluginConfig();
-        $freeze = (bool)$config->get("screen-freeze", true);
+        $freeze = (bool) Loader::getInstance()->getPluginConfig()->get("screen-freeze", true);
 
         if ($freeze && isset($this->screenedPlayers[$id])) {
             if (time() < $this->screenedPlayers[$id]) {
