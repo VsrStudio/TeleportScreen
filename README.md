@@ -2,9 +2,9 @@
 
 🎮 **TeleportScreen** is a PocketMine-MP API 5 plugin that displays a custom screen (UI & animation) when a player teleports, respawns, or joins a server. This plugin also supports sound effects and a **freeze** feature to keep the game running smoothly.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/VsrStudio/TeleportScreen/main/icon.png" width="64" style="margin-right: 10px;"/>
-  <img src="https://github.com/VsrStudio/TeleportScreen/blob/main/63354992-59ab-4125-94e5-8a1ff684f4e6.gif" width="480"/>
+<p align="center" style="position: relative; display: inline-block;">
+  <img src="https://github.com/VsrStudio/TeleportScreen/blob/main/63354992-59ab-4125-94e5-8a1ff684f4e6.gif" width="420"/>
+  <img src="https://github.com/VsrStudio/TeleportScreen/blob/main/icon.png" width="64" style="position: absolute; top: 8px; left: 8px;"/>
 </p>
 
 ## Feature
