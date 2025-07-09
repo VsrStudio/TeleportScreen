@@ -1,5 +1,5 @@
 name: TeleportScreen
-main: VsrStudio\TeleportScreen\Loader.php
+main: VsrStudio\TeleportScreen\Loader
 api: 5.0.0
 version: 1.0
 author: VsrStudio
