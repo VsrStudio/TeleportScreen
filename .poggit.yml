@@ -1,0 +1,9 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/VsrStudio/TeleportScreen
+build-by-default: true
+branches:
+- main
+projects:
+  TeleportScreen:
+    path: ""
+    icon: "icon.png"
+...
